@@ -16,6 +16,7 @@ import introducirBC from './views/intruducirBC';
 import mostrarBC from './views/mostrar';
 import usarBC from './views/usarBC';
 import consultarBC from './views/consultarBC';
+import peliculaGanadora from './views/peliculaGanadora';
 
 const App = () =>(
     <Provider store={store}>
@@ -27,6 +28,7 @@ const App = () =>(
                 <Route exact path = "/mostrar-bc" component = {mostrarBC} />
                 <Route exact path = "/usar-bc" component = {usarBC} />
                 <Route exact path = "/consultar-bc" component = {consultarBC} />
+                <Route exact path = "/pelicula-ganadora/:posicion" component = {peliculaGanadora} />
                 
             </Fragment>
         </BrowserRouter>

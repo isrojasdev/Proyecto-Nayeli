@@ -103,15 +103,16 @@ class App extends Component {
         console.log('tiene');
         var tiene = this.state.tiene;
         var tieneString = this.state.tieneString;
-        tieneString.push(this.state.datosGuardar[this.state.posicionPeliculaSecundaria]);
+        tieneString.push(this.state.datosGuardar[this.state.posicionPelicula]);
         tiene.push(this.state.actual);
+        var posicion = this.state.posicion;
         var posicionPelicula = this.state.posicionPelicula + 1;
         var posicionSecundaria = this.state.posicionPeliculaSecundaria + 1;
         this.setState({
             tiene: tiene,
             tieneString: tieneString,
             posicionPelicula: posicionPelicula,
-            posicionPeliculaSecundaria: posicionSecundaria
+            posicionPeliculaSecundaria: posicionSecundaria,
         },() => {
             console.log('entro aqui');
             console.log(this.state);
@@ -123,14 +124,15 @@ class App extends Component {
         console.log('no tiene');
         var noTiene = this.state.noTiene;
         var noTieneString = this.state.noTieneString;
-        noTieneString.push(this.state.datosGuardar[this.state.posicionPeliculaSecundaria]);
+        noTieneString.push(this.state.actualString);
         noTiene.push(this.state.actual);
         var posicion = this.state.posicion + 1;
+        var posicionSecundaria = this.state.posicionPeliculaSecundaria + 1;
         this.setState({
             noTiene: noTiene,
             noTieneString: noTieneString,
             posicion:posicion,
-            posicionPelicula: 1
+            posicionPeliculaSecundaria: posicionSecundaria
         }, () => {
             console.log('entro aqui');
             console.log(this.state);
@@ -144,6 +146,7 @@ class App extends Component {
         var noTieneString = this.state.noTieneString;
         var posicion = this.state.posicion;
         var posicionSecundaria = this.state.posicionPeliculaSecundaria; 
+        var posicionPelicula = this.state.posicionPelicula;
         var candado = true;
         var datosBC = this.state.datosBC;
         if (noTiene.length === 0) {
@@ -201,16 +204,10 @@ class App extends Component {
                             default:
                                 break;
                         }
-                        console.log(datosBC[posicion][posicionSecundaria] +'==='+ noTiene[i]);
-                        if (datosBC[posicion][posicionSecundaria] === noTiene[i]) {
+                        console.log(datosBC[posicion][posicionPelicula] +'==='+ noTiene[i]);
+                        if (datosBC[posicion][posicionPelicula] === noTiene[i]) {
                             console.log('la pelicula no es valida, incrementa posicion');
                             posicion = posicion + 1;
-                            /*this.setState({
-                                posicion: posicion
-                            }, () => {
-                                console.log('posicion => ' + posicion);
-                                console.log(this.state);
-                            });*/
                         } else {
                             console.log('la pelicula es valida, se continua evaluando');
                             //candado = false;
@@ -218,6 +215,9 @@ class App extends Component {
                             if (i === noTiene.length - 1) {
                                 console.log('fin de evaluacion, no tiene');
                                 candado = false;
+                                this.setState({
+                                    posicion: posicion
+                                });
                                 this.evaluacionTiene(posicion);
                             }
                         }
@@ -237,8 +237,8 @@ class App extends Component {
         var candado = true;
         console.log('posicion: ' + posicion);
 
-        var actual = this.state.datosBC[posicion][posicionPeliculaSecundaria];
-        var actualString = this.state.datos[posicion];
+        var actual = this.state.datosBC[posicion][this.state.posicionPelicula];
+        var actualString = this.state.datos[this.state.posicionPelicula];
         var tituloActual = this.state.datosBC[posicion][0];
         if (tiene.length === 0) {
             console.log('no hay valores a evaluar en tiene');
@@ -303,25 +303,41 @@ class App extends Component {
                             default:
                                 break;
                         }
-                        console.log(datosBC[posicion][posicionSecundaria] +'==='+ tiene[i]);
-                        if (datosBC[posicion][posicionSecundaria] === tiene[i]) {
-                            console.log('la pelicula es valida, se continua evaluando');
-                            console.log(i + '===' + (tiene.length -1));
-                            if (i === tiene.length - 1) {
-                                console.log('fin de evaluacion, tiene');
-                                actual = this.state.datosBC[this.state.posicion][this.state.posicionPelicula];
-                                actualString = this.state.datos[this.state.posicionPelicula];
-                                tituloActual = this.state.datosBC[this.state.posicion][0];
-                                this.setState({
-                                    actual: actual,
-                                    actualString: actualString,
-                                    tituloActual: tituloActual
-                                });
-                                candado = false;
-                            }
+                        console.log(posicionSecundaria);
+                        console.log(posicion);
+                        console.log(posicionSecundaria +'>'+ (this.state.datos.length - 3));
+                        if (posicionSecundaria > (this.state.datos.length - 3)) {
+                            Swal.fire(
+                                'Yeyyy!',
+                                'Tu pelicula es ' + this.state.tituloActual,
+                                'success'
+                            ).then(() => {
+                                window.location.replace(`/pelicula-ganadora/${this.state.posicion}`);
+                            })
+                            candado = false
+                            break;
                         } else {
-                            console.log('la pelicula no es valida, incrementa posicion');
-                            posicion = posicion + 1;
+                            console.log(datosBC[posicion][posicionSecundaria] +'==='+ tiene[i]);
+                            if (datosBC[posicion][posicionSecundaria] === tiene[i]) {
+                                console.log('la pelicula es valida, se continua evaluando');
+                                console.log(i + '===' + (tiene.length -1));
+                                if (i === tiene.length - 1) {
+                                    console.log('fin de evaluacion, tiene');
+                                    actual = this.state.datosBC[posicion][this.state.posicionPelicula];
+                                    actualString = this.state.datos[this.state.posicionPelicula];
+                                    tituloActual = this.state.datosBC[posicion][0];
+                                    this.setState({
+                                        actual: actual,
+                                        actualString: actualString,
+                                        tituloActual: tituloActual,
+                                        posicionPeliculaSecundaria: 1
+                                    });
+                                    candado = false;
+                                }
+                            } else {
+                                console.log('la pelicula no es valida, incrementa posicion');
+                                posicion = posicion + 1;
+                            }
                         }
                     }
                 }
